@@ -1,0 +1,460 @@
+---
+title: "Workshop on regex in R - Part I"
+author: "Edith Scheifele (B7, Z2)"
+date: "20th December 2019"
+output: 
+  beamer_presentation:
+    template: my_template.tex
+    includes:
+      in_header: page_numbers.tex
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = NA, message = FALSE)
+```
+
+```{r packages, include=FALSE}
+library(here)
+library(tidyverse)
+```
+
+## regex?
+
+```{r include_graphics_cat_on_keyboard, out.width="74%", echo=FALSE}
+knitr::include_graphics(here("figures", "cat_on_keyboard.jpg"))
+```
+\hfill{\tiny hat tip to Martin Schäfer}
+
+## Intro
+
+- regular expressions (regex) are a very powerful pattern matching tool for strings
+
+- several implementations with slightly different rules
+
+
+## Use Cases
+
+- select all txt files, and only those, from a directory 
+\pause
+- detect if there are any leading spaces in a string
+\pause
+- extract a subject id from a file name
+\pause
+- replace some strange looking characters (e.g., German umlauts)
+
+## Plan for today
+
+1. 4 functions from *stringr* + exercises
+2. basic regular expressions 
+
+## Requirements
+
+- a fresh R script in RStudio for doing the exercises
+
+- packages (installed and loaded): 
+
+  - a relatively new version of *tidyverse* since it includes *stringr* by default
+  - or *stringr* alone
+
+
+## *stringr*
+
+- package for string manipulation
+
+\pause
+
+- all functions begin with `str_` and take a character vector as their first argument
+
+  - each piece in a character vector is a string, so everything that's enclosed with either double or single quotation marks is a string
+
+\pause
+
+- all functions take a `pattern` argument where you can input your regex as a string
+
+\pause
+
+- some functions require additional arguments (see `str_replace()`)
+
+\pause
+
+- there are 7 basic functions, but we will look at only 4 today:
+  + `str_detect(string, pattern)` 
+  + `str_subset(string, pattern)` 
+  + `str_extract(string, pattern)`
+  + `str_replace(string, pattern, replacement)`
+  + plus their greedy sisters extended by `_all`, e.g. `str_replace_all()`
+
+## *stringr*: `str_detect()` 
+
+- `str_detect()` outputs a logical vector with `TRUE` if it detects the pattern and `FALSE` if not 
+
+\pause
+
+```{r}
+fruits <- c("Birne", "Apfel", "Weintraube", "Banane")
+```
+
+```{r}
+str_detect(fruits, "a")
+```
+
+\pause
+
+- what does the output tell you?
+
+  \pause
+  - as with all `stringr` functions, case matters: a is not A.
+  - it does not matter how many matches there are: there is 1 in *Weintraube* and 2 in *Banane*
+
+## *stringr*: `str_detect()` -- exercises
+
+```{r}
+fruits <- c("Birne", "Apfel", "Weintraube", "Banane")
+```
+
+- check `fruits` for more sophisticated patterns, like *an* or *au*  
+
+- which cases can't you check (yet)?
+
+  \pause
+  + detect if a string ends with e.g. *e*, no matter if it (also) contains one in the beginning or middle  
+  + detect if a string contains an *a* followed by some other character and then followed by an *e*
+  
+## *stringr*: `str_subset()`
+
+- `str_subset()` does a similar thing like `str_detect()`, i.e. it detects a pattern in a string, but it outputs the matched string
+
+\pause
+
+```{r echo=TRUE}
+fruits <- c("Birne", "Apfel", "Weintraube", "Banane")
+```
+
+
+```{r}
+str_subset(fruits, "a")
+```
+
+- it is irrelevant how many matches there are in a string
+
+
+## *stringr*: `str_subset()` -- exercises
+
+```{r}
+fruits <- c("Birne", "Apfel", "Weintraube", "Banane")
+```
+
+- Which strings in `fruits` include a *b*?  
+
+\pause
+
+```{r}
+str_subset(fruits, "b")
+```
+
+
+## *stringr*: `str_extract()` & `str_extract_all()`
+
+- `str_extract()` extracts the first match and outputs it, when there is no match it outputs `NA`
+
+\pause
+
+```{r}
+fruits <- c("Birne", "Apfel", "Weintraube", "Banane")
+```
+
+```{r}
+str_extract(fruits, "a")
+```
+
+\pause
+
+- How many *a* did we get for *Banana*? What's the problem?
+
+## *stringr*: `str_extract()` & `str_extract_all()`
+
+- `str_extract_all()` extracts all matches and outputs them in a list, when there is no match it outputs `character(0)` (i.e. an empty character vector)
+ 
+```{r}
+str_extract_all(fruits, "a")
+```
+
+## *stringr*: `str_extract()` & `str_extract_all()` -- exercises
+
+```{r}
+fruits <- c("Birne", "Apfel", "Weintraube", "Banane")
+```
+
+- Extract all *n* from `fruits`   
+
+- How many are there all in all? Hint: `unlist()` and `length()`
+
+## *stringr*: `str_replace()` & `str_replace_all()`
+
+- `str_replace(string, pattern, replacement)` replaces the first match of `pattern` with `replacement`
+
+\pause
+
+```{r}
+fruits_with_upper_E <- c("BirnE", "ApfEl",
+                         "WEintraubE", "BananE")
+```
+
+```{r}
+str_replace(fruits_with_upper_E, "E", "e")
+```
+
+\pause
+
+- Do you see any problem?
+
+## *stringr*: `str_replace()` & `str_replace_all()` -- exercises
+
+- `str_replace_all()` replaces all matches of `pattern` with `replacement`
+
+\pause
+
+```{r}
+fruits_with_upper_E <- c("BirnE", "ApfEl",
+                         "WEintraubE", "BananE")
+```
+
+- replace all *E* with *e* from `fruits_with_upper_E`
+
+\pause
+
+```{r}
+str_replace_all(fruits_with_upper_E, "E", "e")
+```
+
+## regex 
+
+- you actually already wrote some regex: the letter you specified in `pattern`, e.g. *a* was a regex   
+
+- `pattern` needs the regex as a string, so we put the *a* in quotes 
+
+## regex: higher-level representations
+
+- to use the full power of regex you need some higher-level representations 
+\pause
+
+- some higher-level representations:
+  + any character, except `\n` (newline): `.` 
+  + word character (lower and upper case letters, digits, and the underscore): `\w`
+  + digit: `\d`
+  + range: 
+    - lower case letters a through c: [a-c]  
+    - all vowels: [aeiou]
+
+## regex: quantifiers
+
+- if you want to match a regex variably often you need quantifiers
+- they go behind the regex you want to quantifiy
+
+\pause
+
+- **quantifiers**:
+  + ?: zero or one (e.g., `"a?"`)  
+  + `*`: zero or more  (e.g., `"a*"`)
+  + +: one or more  (e.g., `"a+"`)  
+  + {n}: exactly n times   (e.g., `"a{2}"`)
+  + {n,}: n or more times  (e.g., `"a{1,}"`)
+  + {,n}: at most n times  (e.g., `"a{,2}"`)
+  + {n,m}: between n and m times  (e.g., `"a{1,2}"`)
+
+## regex: escaping with `\`
+
+- some characters have a special meaning in R: `\`, `"`, or `.`
+
+\pause
+
+- in order to use them as a literal backslash, quote, or dot, you need to escape them with a backslash `\` 
+
+\pause
+
+- to extract a digit with the regex `\d`, you actually need to write the escaped string version `"\\d"` into `pattern`
+
+\pause
+
+```{r}
+subject_id <- c("subject1xxx",
+                "subject2xyy",
+                "subject3yyx")
+```
+
+\pause
+
+```{r}
+str_extract(subject_id, pattern = "\\d")
+```
+
+\pause
+
+- sometimes you can avoid escaping by putting your special character inside the range backets `[ ]` where they are treated with their literal meaning (see exercise)
+
+## regex -- exercises
+
+\small
+
+```{r}
+test <- c("aba", "a.a", "xabax", "2a2a", "ya?ay")
+```
+
+- get all strings from `test` that follow the pattern: *a* followed by any character followed by *a*
+
+\pause
+
+```{r}
+str_subset(test, "a.a")
+```
+
+\pause
+
+- extract only the match, not the whole string
+
+\pause
+
+```{r}
+str_extract(test, "a.a")
+```
+
+\pause
+
+- design a pattern that only matches *a.a* and get the string
+
+\pause
+
+```{r}
+str_subset(test, "a\\.a")
+```
+
+## regex -- exercises
+
+```{r}
+filenames <- c("eprime_subject_1_2019-12-08",
+               "eprime_subject_2_2019-12-18",
+               "eprime_subject_11_2019-12-28")
+```
+
+- extract the subject id from `filenames`  
+
+\pause
+
+```{r}
+str_extract(filenames, "\\d{1,}")
+```
+
+```{r}
+str_extract(filenames, "\\d+")
+```
+
+\pause
+
+- extract the date from `filenames`
+
+\pause
+
+```{r}
+str_extract(filenames, "\\d{4}-\\d{2}-\\d{2}")
+```
+
+## regex -- exercises
+
+```{r}
+christmas <- c("Merry", "christmas.")
+```
+
+- extract all vowels from `christmas`
+
+\pause
+
+```{r}
+str_extract_all(christmas, "[aeiou]")
+```
+
+\pause
+
+- extract the punctuation mark from `christmas`
+
+\pause
+
+```{r}
+str_extract(christmas, "\\.")
+```
+
+```{r}
+str_extract(christmas, "[.]")
+```
+
+## regex: anchors
+
+- match from the beginning or end of a string:
+  + beginning: `^`
+  + end: `$`
+
+\pause
+
+```{r}
+flowers <- c("Veilchen", "Rose", "Tulpe",
+             "Engelsflügel")
+```
+
+- match flowers that end with an *e*
+
+\pause
+
+```{r}
+str_subset(flowers, "e$")
+```
+
+\pause
+
+- match flowers that begin with an *e*
+
+\pause
+
+```{r}
+str_subset(flowers, "^E")
+```
+
+## regex: Recap
+
+- by cleverly combining the concepts from above, we can solve all our use cases and the cases we weren't able to check before: 
+  \pause
+  + select all txt files, and only those, from a directory by specifying the `pattern` argument in `list.files()` with `"txt"`
+  \pause
+  + detect if there are any leading spaces in a string by combining `^` and spaces
+  \pause
+  + extract a subject id from a file name with a version of `\d`
+  \pause
+  + replace some strange looking characters (e.g., German umlauts)
+  \pause
+  + detect if a string ends with e.g. *e*, no matter if it (also) contains one in the beginning or middle, by using `e$` 
+  \pause
+  + detect if a string contains an *a* followed by some other character and then followed by an *e* by using the `.` 
+
+## regex!
+
+```{r include_graphics_xkcd, out.width="65%", echo=FALSE}
+knitr::include_graphics(here("figures", "regular_expressions.png"))
+```
+
+\hfill{\tiny https://xkcd.com/208/}
+
+## resources
+
+\small
+**stringr**  
+
+https://stringr.tidyverse.org/articles/regular-expressions.html  
+https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html  
+
+**regex & stringr**
+
+https://r4ds.had.co.nz/strings.html  
+
+**cheatsheets**  
+
+https://rstudio.com/wp-content/uploads/2016/09/regexCheatsheet.pdf  
+https://github.com/rstudio/cheatsheets/blob/master/strings.pdf  

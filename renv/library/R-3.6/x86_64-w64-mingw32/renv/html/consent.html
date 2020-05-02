@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Consent to usage of renv</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for consent {renv}"><tr><td>consent {renv}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Consent to usage of renv</h2>
+
+<h3>Description</h3>
+
+<p>Provide consent to <code>renv</code>, allowing it to write and update certain files
+on your filesystem.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+consent()
+</pre>
+
+
+<h3>Details</h3>
+
+<p>As part of its normal operation, <code>renv</code> will write and update some files
+in your project directory, as well as an application-specific cache
+directory. These paths are documented within <a href="paths.html">paths</a>.
+</p>
+<p>In accordance with the
+<a href="https://cran.r-project.org/web/packages/policies.html">CRAN Repository Policy</a>,
+<code>renv</code> must first obtain consent from you, the user, before these actions
+can be taken. Please call <code>renv::consent()</code> in an interactive session to
+provide this consent.
+</p>
+<p>You can also set the <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> option:</p>
+<pre>options(renv.consent = TRUE)
+</pre>
+<p>to implicitly provide this consent for e.g. non-interactive <span style="font-family: Courier New, Courier; color: #666666;"><b>R</b></span> sessions.
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>renv</em> version 0.7.0-15 <a href="00Index.html">Index</a>]</div>
+</body></html>
